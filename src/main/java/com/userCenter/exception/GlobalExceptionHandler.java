@@ -6,6 +6,7 @@ import com.userCenter.common.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
  * @version 1.0
@@ -14,15 +15,15 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  * @注释
  */
 @Slf4j
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(RuntimeException.class)
-    public BaseResponse runtimeException(RuntimeException e) {
-        log.error("RuntimeException", e);
+    @ExceptionHandler(Exception.class)
+    public BaseResponse exception(Exception e) {
+        log.error("Exception", e);
         return ResultUtils.error(ErrorCode.SYSTEM_ERROR,e.getMessage(),"") ;
     }
-    @ExceptionHandler(BuinessException.class)
-    public BaseResponse buinessException(BuinessException e) {
+    @ExceptionHandler(BusinessException.class)
+    public BaseResponse businessException(BusinessException e) {
         log.error("BusinessException{}", e.getMessage(), e);
         return ResultUtils.error(e.getCode(),e.getMessage(),"") ;
     }

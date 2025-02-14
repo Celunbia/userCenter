@@ -11,12 +11,12 @@ import java.io.Serializable;
  * @注释
  */
 @Data
-public class LoginUser implements Serializable {
+public class UserLoginRequest implements Serializable {
     private static final long serialVersionUID = 5027300685488024669L;
 
     private String userAccount;
 
-    private String password;
+    private String userPassword;
 
 
 

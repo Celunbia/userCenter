@@ -3,7 +3,7 @@ package com.userCenter.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.userCenter.common.ErrorCode;
-import com.userCenter.exception.BuinessException;
+import com.userCenter.exception.BusinessException;
 import com.userCenter.model.domain.User;
 import com.userCenter.service.UserService;
 import com.userCenter.mapper.UserMapper;
@@ -49,38 +49,38 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         // 1. 校验
         if(StringUtils.isAnyBlank(userAccount,password,checkPassword,planetCode)){
-            throw new BuinessException(ErrorCode.PARAMS_ERROR,"参数存在空值") ;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"参数存在空值") ;
         }
         if(userAccount.length()<4 )
         {
-            throw new BuinessException(ErrorCode.PARAMS_ERROR,"账号长度小于4") ;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"账号长度小于4") ;
         }
         if(password.length()<8 || checkPassword.length()<8){
-            throw new BuinessException(ErrorCode.PARAMS_ERROR,"密码/校验密码长度小于8") ;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"密码/校验密码长度小于8") ;
         }
         if(!checkPassword.equals(password)){
-            throw new BuinessException(ErrorCode.PARAMS_ERROR,"两次输入密码不同") ;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"两次输入密码不同") ;
         }
         if(planetCode.length()>5){
-            throw new BuinessException(ErrorCode.PARAMS_ERROR,"编号长度大于5") ;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"编号长度大于5") ;
         }
         boolean isValid = Pattern.matches(REGEX,userAccount);
         if(!isValid){
-            throw new BuinessException(ErrorCode.PARAMS_ERROR,"存在特殊字符") ;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"存在特殊字符") ;
         }
         // 账号不能重复
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_account",userAccount);
         long countUserAccount = this.count(queryWrapper);
         if(countUserAccount>0){
-            throw new BuinessException(ErrorCode.PARAMS_ERROR,"账号不能重复") ;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"账号不能重复") ;
         }
         //星球编号不重复
         queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("planet_code",planetCode);
         long countPlanetCode = this.count(queryWrapper);
         if(countPlanetCode>0){
-            throw new BuinessException(ErrorCode.PARAMS_ERROR,"编号不能重复") ;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"编号不能重复") ;
         }
         //2.加密
         String hexPassword = DigestUtils.md5DigestAsHex((SALT+password).getBytes());
@@ -91,7 +91,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         user.setPlanetCode(planetCode);
         boolean result =  this.save(user);
         if(!result){
-            throw new BuinessException(ErrorCode.PARAMS_ERROR,"插入错误") ;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"插入错误") ;
         }
         return 0 ;
     }
@@ -105,16 +105,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         if(userAccount.length()<4 )
         {
-            throw new BuinessException(ErrorCode.PARAMS_ERROR,"账号长度小于4") ;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"账号长度小于4") ;
         }
         if(password.length()<8 ){
-            throw new BuinessException(ErrorCode.PARAMS_ERROR,"密码长度小于8") ;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"密码长度小于8") ;
         }
 
 
         boolean isValid = Pattern.matches(REGEX,userAccount);
         if(!isValid){
-            throw new BuinessException(ErrorCode.PARAMS_ERROR,"账号不得包含特殊字符串") ;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"账号不得包含特殊字符串") ;
         }
 
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -122,7 +122,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User user = userMapper.selectOne(queryWrapper);
         if(user==null||user.getIsDelete()==1){
 
-            throw new BuinessException(ErrorCode.PARAMS_ERROR,"账号/密码不匹配") ;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"账号/密码不匹配") ;
         }
 
         //2.加密
@@ -130,7 +130,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         //3.匹配
         if(!user.getUserPassword().equals(hexPassword)){
 
-            throw new BuinessException(ErrorCode.PARAMS_ERROR,"账号/密码不匹配") ;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"账号/密码不匹配") ;
         }
 
         //4.脱敏
@@ -157,6 +157,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return null;
         }
         User safetyUser = new User();
+        safetyUser.setId(user.getId());
         safetyUser.setUserName(user.getUserName());
         safetyUser.setUserAccount(user.getUserAccount());
         safetyUser.setAvatarUrl(user.getAvatarUrl());

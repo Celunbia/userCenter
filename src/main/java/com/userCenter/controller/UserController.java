@@ -6,8 +6,8 @@ import com.userCenter.common.ErrorCode;
 import com.userCenter.common.ResultUtils;
 
 import com.userCenter.exception.BusinessException;
-import com.userCenter.model.domain.request.LoginUser;
-import com.userCenter.model.domain.request.RegisteredUser;
+import com.userCenter.model.domain.request.UserLoginRequest;
+import com.userCenter.model.domain.request.UserRegisterRequest;
 import com.userCenter.model.domain.User;
 import com.userCenter.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,15 +40,15 @@ public class UserController {
      *
      */
     @PostMapping("/register")
-    BaseResponse<Long> registeredUser(@RequestBody RegisteredUser registeredUser) {
+    BaseResponse<Long> registeredUser(@RequestBody UserRegisterRequest userRegisterRequest) {
 
-        if(registeredUser == null) {
+        if(userRegisterRequest == null) {
            throw new BusinessException(ErrorCode.NULL_ERROR,"请求封装对象为空");
         }
-        String userAccount = registeredUser.getUserAccount();
-        String password = registeredUser.getPassword();
-        String checkPassword = registeredUser.getCheckPassword();
-        String planetCode = registeredUser.getPlanetCode();
+        String userAccount = userRegisterRequest.getUserAccount();
+        String password = userRegisterRequest.getUserPassword() ;
+        String checkPassword = userRegisterRequest.getCheckPassword();
+        String planetCode = userRegisterRequest.getPlanetCode();
 
         if(StringUtils.isAnyBlank(userAccount, password, checkPassword,planetCode)) {
             throw new BusinessException(ErrorCode.NULL_ERROR,"请求中存在字段为空") ;
@@ -64,13 +64,13 @@ public class UserController {
      *
      */
     @PostMapping("/login")
-    BaseResponse<User> loginUser(@RequestBody LoginUser loginUser , HttpServletRequest request) {
+    BaseResponse<User> loginUser(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
 
-        if(loginUser == null) {
+        if(userLoginRequest == null) {
             throw new BusinessException(ErrorCode.NULL_ERROR,"请求封装对象为空") ;
         }
-        String userAccount = loginUser.getUserAccount();
-        String password = loginUser.getPassword();
+        String userAccount = userLoginRequest.getUserAccount();
+        String password = userLoginRequest.getUserPassword();
 
 
 
@@ -126,9 +126,9 @@ public class UserController {
      *
      */
     @GetMapping("/search")
-    BaseResponse<List<User>> searchUser(String userName , HttpServletRequest request   ) {
+    BaseResponse<List<User>> searchUser(String username , HttpServletRequest request   ) {
 
-        if(userName == null ) {
+        if(username == null ) {
 //            ArrayList<User> objects = new ArrayList<>();
 //            objects.add(new User());
             throw new BusinessException(ErrorCode.NULL_ERROR,"请求中存在字段为空") ;
@@ -141,8 +141,8 @@ public class UserController {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
 
 
-        if(StringUtils.isNotBlank(userName)) {
-            queryWrapper.like("user_name", userName);
+        if(StringUtils.isNotBlank(username)) {
+            queryWrapper.like("user_name", username);
         }
 
         List<User> list =  userService.list(queryWrapper).stream().map(
