@@ -46,4 +46,6 @@ public interface UserService extends IService<User> {
      * @return 返回表示数
      */
     int userLogout(HttpServletRequest request);
+
+    boolean updateUser(User user);
 }

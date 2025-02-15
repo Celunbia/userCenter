@@ -155,6 +155,34 @@ public class UserController {
     }
 
     /**
+     *更新
+     * @param user
+     * @param request
+     * @return
+     */
+    @PostMapping("/update")
+    public BaseResponse<Boolean> updateUser(@RequestBody User user, HttpServletRequest request) {
+        // 1. 检查用户权限
+        if (!roleCheck(request)) {
+            throw new BusinessException(ErrorCode.NO_AUTH, "无操作权限");
+        }
+
+        // 2. 检查参数合法性
+        if (user == null || user.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数错误：用户信息不合法");
+        }
+
+        // 3. 调用服务层更新用户信息
+        boolean isUpdated = userService.updateUser(user);
+
+        // 4. 返回操作结果
+        if (isUpdated) {
+            return ResultUtils.success(true);
+        } else {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "用户信息更新失败");
+        }
+    }
+    /**
      *  管理员删除用户
      *
      */

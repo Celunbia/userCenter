@@ -184,6 +184,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     }
 
+    @Override
+    public boolean updateUser(User user) {
+        userMapper.updateById(user);
+        return true;
+    }
+
 
 }
 
