@@ -10,7 +10,9 @@ import com.userCenter.service.OperateLogService;
 import com.userCenter.utils.JsonFormatter;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +26,8 @@ import static com.userCenter.contant.userContant.USER_LOGIN_STATUS;
  * @version 1.0
  * @Author ye
  */
+@Component
+@Aspect
 public class LogAop {
     @Resource
     public OperateLogService operateLogService;
@@ -63,7 +67,9 @@ public class LogAop {
 
         //返回值
         operateLog.setMethodReturn(JsonFormatter.getInstance().writeValueAsString(result));
+        if(!operateLogService.save(operateLog) ){
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"操作日志保存失败");
+        }
 
-        operateLogService.save(operateLog) ;
     }
 }
