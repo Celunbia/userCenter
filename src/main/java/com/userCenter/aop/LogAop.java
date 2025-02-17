@@ -43,7 +43,7 @@ public class LogAop {
         Object attribute = request.getSession().getAttribute(USER_LOGIN_STATUS);
         User user = (User) attribute;
         if (user == null) {
-            throw new BusinessException(ErrorCode.NOT_LOGIN);
+            operateLog.setOperatorId(null);
         } else {
             operateLog.setOperatorId(user.getId());
         }
