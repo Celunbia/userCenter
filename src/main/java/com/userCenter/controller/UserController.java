@@ -1,6 +1,7 @@
 package com.userCenter.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.userCenter.common.BaseResponse;
 import com.userCenter.common.ErrorCode;
 import com.userCenter.common.ResultUtils;
@@ -10,6 +11,7 @@ import com.userCenter.model.domain.request.UserLoginRequest;
 import com.userCenter.model.domain.request.UserRegisterRequest;
 import com.userCenter.model.domain.User;
 import com.userCenter.service.UserService;
+import com.userCenter.utils.JsonFormatter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -108,7 +110,7 @@ public class UserController {
      * 查找信息
      */
     @GetMapping("/current")
-    public BaseResponse<User> currentUser(HttpServletRequest request) {
+    public String currentUser(HttpServletRequest request) throws JsonProcessingException {
         //todo 校验是否合法
         Object object = request.getSession().getAttribute(USER_LOGIN_STATUS);
         User currentUser = (User)object;
@@ -117,7 +119,7 @@ public class UserController {
         }
         long id = currentUser.getId();
         User user=  userService.getSafetyUser(userService.getById(id));
-        return ResultUtils.success(user) ;
+        return JsonFormatter.getInstance().writeValueAsString(ResultUtils.success(user));
 
     }
 
@@ -126,7 +128,7 @@ public class UserController {
      *
      */
     @GetMapping("/search")
-    BaseResponse<List<User>> searchUser(String username , HttpServletRequest request   ) {
+    String searchUser(String username , HttpServletRequest request   ) throws JsonProcessingException {
 
         if(username == null ) {
 //            ArrayList<User> objects = new ArrayList<>();
@@ -151,7 +153,7 @@ public class UserController {
                     return user;
                 }
         ).collect(Collectors.toList());
-        return ResultUtils.success(list);
+        return JsonFormatter.getInstance().writeValueAsString(ResultUtils.success(list)) ;
     }
 
     /**
@@ -161,7 +163,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/update")
-    public BaseResponse<Boolean> updateUser(@RequestBody User user, HttpServletRequest request) {
+    public String updateUser(@RequestBody User user, HttpServletRequest request) throws JsonProcessingException {
         // 1. 检查用户权限
         if (!roleCheck(request)) {
             throw new BusinessException(ErrorCode.NO_AUTH, "无操作权限");
@@ -177,7 +179,7 @@ public class UserController {
 
         // 4. 返回操作结果
         if (isUpdated) {
-            return ResultUtils.success(true);
+            return JsonFormatter.getInstance().writeValueAsString(ResultUtils.success(true)) ;
         } else {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "用户信息更新失败");
         }
@@ -187,7 +189,7 @@ public class UserController {
      *
      */
     @PostMapping("/delete")
-    BaseResponse<Boolean> deleteUser(long id, HttpServletRequest request) {
+    String deleteUser(long id, HttpServletRequest request) throws JsonProcessingException {
         boolean result ;
 //        if(id<=0|| UserController.roleCheck(request)) {
 //            return ResultUtils.success(false) ;
@@ -204,7 +206,7 @@ public class UserController {
 
 
          result = userService.removeById(id) ;
-        return ResultUtils.success(result);
+        return JsonFormatter.getInstance().writeValueAsString(ResultUtils.success(result)) ;
 
 
     }
