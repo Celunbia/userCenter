@@ -2,6 +2,7 @@ package com.userCenter.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.userCenter.anno.OperateLogAnno;
 import com.userCenter.common.BaseResponse;
 import com.userCenter.common.ErrorCode;
 import com.userCenter.common.ResultUtils;
@@ -42,6 +43,7 @@ public class UserController {
      *
      */
     @PostMapping("/register")
+    @OperateLogAnno
     BaseResponse<Long> registeredUser(@RequestBody UserRegisterRequest userRegisterRequest) {
 
         if(userRegisterRequest == null) {
@@ -66,6 +68,7 @@ public class UserController {
      *
      */
     @PostMapping("/login")
+
     BaseResponse<User> loginUser(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
 
         if(userLoginRequest == null) {
@@ -163,6 +166,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/update")
+    @OperateLogAnno
     public String updateUser(@RequestBody User user, HttpServletRequest request) throws JsonProcessingException {
         // 1. 检查用户权限
         if (!roleCheck(request)) {
@@ -189,6 +193,7 @@ public class UserController {
      *
      */
     @PostMapping("/delete")
+    @OperateLogAnno
     String deleteUser(long id, HttpServletRequest request) throws JsonProcessingException {
         boolean result ;
 //        if(id<=0|| UserController.roleCheck(request)) {
