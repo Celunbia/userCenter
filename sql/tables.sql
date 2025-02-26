@@ -18,3 +18,17 @@ create table user
 )
     comment '用户信息';
 
+create table user_center.operate_log
+(
+    id            bigint auto_increment comment '序号'
+        primary key,
+    operator_id   bigint        null comment '操作人',
+    operate_time  datetime      null comment '操作时间',
+    class_name    varchar(512)  null comment '类名',
+    method_name   varchar(256)  null comment '操作方法名',
+    args          varchar(1024) null comment '参数',
+    used_time     int           null comment '耗时 ms',
+    method_return varchar(512)  null comment '返回值'
+)
+    comment '操作日志';
+
