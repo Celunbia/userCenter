@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.userCenter.mapper.OperateLogMapper">
+
+    <resultMap id="BaseResultMap" type="com.userCenter.model.domain.OperateLog">
+            <id property="id" column="id" />
+            <result property="operatorId" column="operator_id" />
+            <result property="operateTime" column="operate_time" />
+            <result property="className" column="class_name" />
+            <result property="methodName" column="method_name" />
+            <result property="args" column="args" />
+            <result property="usedTime" column="used_time" />
+            <result property="methodReturn" column="method_return" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,operator_id,operate_time,class_name,method_name,args,
+        used_time,method_return
+    </sql>
+</mapper>
