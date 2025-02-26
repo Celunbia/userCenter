@@ -22,8 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.userCenter.contant.userContant.USER_LOGIN_STATUS;
-import static com.userCenter.contant.userContant.USER_ROLE;
+import static com.userCenter.contant.userContant.*;
 
 /**
  * 用户请求
@@ -139,7 +138,7 @@ public class UserController {
             throw new BusinessException(ErrorCode.NULL_ERROR,"请求中存在字段为空") ;
 
         }
-        if( UserController.roleCheck(request)){
+        if( UserController.isAdmin(request)){
             throw new BusinessException(ErrorCode.NO_AUTH,"未登录/无权限") ;
         }
 
@@ -169,7 +168,7 @@ public class UserController {
     @OperateLogAnno
     public String updateUser(@RequestBody User user, HttpServletRequest request) throws JsonProcessingException {
         // 1. 检查用户权限
-        if (!roleCheck(request)) {
+        if (!isAdmin(request)) {
             throw new BusinessException(ErrorCode.NO_AUTH, "无操作权限");
         }
 
@@ -194,32 +193,30 @@ public class UserController {
      */
     @PostMapping("/delete")
     @OperateLogAnno
-    String deleteUser(long id, HttpServletRequest request) throws JsonProcessingException {
+    String  deleteUser(long id, HttpServletRequest request) throws JsonProcessingException {
         boolean result ;
-//        if(id<=0|| UserController.roleCheck(request)) {
-//            return ResultUtils.success(false) ;
-//        }
+
         if(id<=0 ) {
-//            ArrayList<User> objects = new ArrayList<>();
-//            objects.add(new User());
-            throw new BusinessException(ErrorCode.PARAMS_ERROR,"id不得小于0") ;
+
+           throw new BusinessException(ErrorCode.PARAMS_ERROR,"id不得小于0") ;
 
         }
-        if( UserController.roleCheck(request)){
+        if( !isAdmin(request)){
             throw new BusinessException(ErrorCode.NO_AUTH,"未登录/无权限") ;
         }
 
 
          result = userService.removeById(id) ;
+
         return JsonFormatter.getInstance().writeValueAsString(ResultUtils.success(result)) ;
 
 
     }
-    private static boolean roleCheck( HttpServletRequest request){
+    private static boolean isAdmin(HttpServletRequest request){
 
        Object object = request.getSession().getAttribute(USER_LOGIN_STATUS);
         User user = (User)object;
-        return user == null || user.getUserRole() == USER_ROLE;
+        return user != null && user.getUserRole() == ADMIN_ROLE;
     }
 
 

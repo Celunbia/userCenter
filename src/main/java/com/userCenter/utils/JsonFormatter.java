@@ -22,6 +22,7 @@ public class JsonFormatter {
                     instance.enable(SerializationFeature.INDENT_OUTPUT);
                     // JSON 格式化输出
                     instance.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+
                     // 忽略未知字段
                 }
             }
